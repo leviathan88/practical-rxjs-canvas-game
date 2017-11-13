@@ -11,9 +11,16 @@ body {
 
 canvas {
     display: block;
-    background: #D1C4E9;
+    background: #80DEEA;
 }
 
-#gameContainer {
-    display: flex;
+.user-input {
+    position: absolute;
+    width: 100px;
+    z-index: 1;
+    left: calc(100% - 270px);
+    top: 60px;
+    font-size: 20px;
+    height: 50px;
+    text-align: center;
 }
