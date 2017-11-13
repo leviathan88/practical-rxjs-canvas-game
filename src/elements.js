@@ -1,6 +1,10 @@
 // import css
 require('./style.css')
 
+// CONSTANTS
+const TEXT_COLOR = '#D500F9'
+const TEXT_FONT = 'bold 30px Indie Flower'
+
 // create canvas element and get its context
 const canvas = document.createElement('canvas')
 const ctx = canvas.getContext('2d')
@@ -9,24 +13,40 @@ const ctx = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
+// create input element
+const input = document.createElement('input')
+input.setAttribute('class', 'user-input')
+input.setAttribute('placeholder', 'RESULT')
+
 // append elements to the document
 document.body.appendChild(canvas)
+document.body.appendChild(input)
+input.focus()
+
 
 // export functions
 module.exports = {
     canvas,
     ctx,
+    input,
 
     showScore,
     clearCanvas,
     showPlayer,
+    showQuestion,
 }
 
 // context functions
 function showScore(score) {
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 26px sans-serif'
-    ctx.fillText(`Your SCORE: ${score}`, 40, 43)
+    ctx.fillStyle = TEXT_COLOR
+    ctx.font = TEXT_FONT
+    ctx.fillText(`SCORE: ${score}`, 40, 43)
+}
+
+function showQuestion(a, b, operator) {
+    ctx.fillStyle = TEXT_COLOR
+    ctx.font = TEXT_FONT
+    ctx.fillText(`ENTER result: ${a} ${operator} ${b}`, canvas.width - 450, 43)
 }
 
 function clearCanvas() {
