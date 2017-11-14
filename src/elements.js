@@ -17,6 +17,7 @@ canvas.height = window.innerHeight
 const input = document.createElement('input')
 input.setAttribute('class', 'user-input')
 input.setAttribute('placeholder', 'RESULT')
+input.setAttribute('type', 'number')
 
 // append elements to the document
 document.body.appendChild(canvas)
@@ -34,6 +35,7 @@ module.exports = {
     clearCanvas,
     showPlayer,
     showQuestion,
+    clearInput
 }
 
 // context functions
@@ -76,4 +78,8 @@ function showPlayer({ x, y }) {
     ctx.arc(x, y - 25, 10, 0, 2 * Math.PI, false)
     ctx.fillStyle = "rgb(0, 0, 0)"
     ctx.fill()
+}
+
+function clearInput() {
+    input.value = ''
 }
