@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion } from './elements'
-import { byDirection, handlePlayerMovement, byNumericalInput, handleUserInput } from './pure'
+import { showScore, clearCanvas, showPlayer, showQuestion, clearInput } from './elements'
+import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty } from './pure'
 
 // GAME RELATED CONSTANTS
 const PLAYER_Y_POSITION = canvas.height - 70
@@ -18,10 +18,13 @@ const PlayerMovement$ = Observable.fromEvent(document, 'keyup')
     .scan(handlePlayerMovement, PLAYER_STARTING_POSITION)
     .startWith(PLAYER_STARTING_POSITION)
 
-const PlayerInput$ = Observable.fromEvent(input, 'input')
-    .pluck('srcElement', 'value')
-    .scan((prev, curr) => !isNaN(curr) ? curr : prev, '')
-    .subscribe(e => input.value = e)
+const PlayerEnterPress$ = Observable.fromEvent(input, 'keyup')
+    .pluck('key')
+    .filter(byEnterPress)
+    .switchMap(() => Observable.of(input.value))
+    .do(clearInput)
+    .filter(byNotEmpty)
+
 
 // MAIN GAME OBSERVABLE
 const Game$ = Observable.combineLatest(
