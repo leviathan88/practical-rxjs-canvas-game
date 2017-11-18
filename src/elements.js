@@ -66,6 +66,22 @@ function showPlayer({ x, y }) {
     ctx.fill()
 }
 
+function showFlakes(enemies) {
+    const startAngle = 0 * (Math.PI / 180)
+    const endAngle = 360 * (Math.PI / 180)
+
+    ctx.strokeStyle = '#af111c'
+    ctx.fillStyle = '#af111c'
+    ctx.lineWidth = 1
+
+    enemies.forEach(({ x, y, radius }) => {
+        ctx.beginPath()
+        ctx.arc(x, y, radius, startAngle, endAngle, false)
+        ctx.fill()
+        ctx.stroke()
+    })
+}
+
 function clearInput() {
     input.value = ''
 }
@@ -127,5 +143,6 @@ module.exports = {
     showPlayer,
     showQuestion,
     clearInput,
+    showFlakes,
     operations
 }
