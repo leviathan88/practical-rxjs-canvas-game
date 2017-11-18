@@ -1,7 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations } from './elements'
+import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations, showFlakes } from './elements'
 import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest } from './pure'
 
 // GAME RELATED CONSTANTS
@@ -21,6 +21,22 @@ const CurrentScore$ = ScoreBehavior$.scan(sumLatest)
 const ScoreInterval$ = Observable.interval(SCORE_INTERVAL_RAISE).map(() => SCORE_INTERVAL_POINTS)
 const PlayerEnterPress$ = Observable.fromEvent(input, 'keyup').pluck('key').filter(byEnterPress)
 const OperationsInterval$ = Observable.interval(500)
+
+const EvilBloodFlakes$ = Observable.interval(500)
+    .scan(flakes => {
+        const flake = {
+            x: parseInt(Math.random() * canvas.width),
+            y: 0,
+            radius: parseInt((Math.random() * 10) + 5)
+        }
+
+        flakes.forEach(flake => {
+            flake.y += 50
+        })
+
+        flakes.push(flake)
+        return flakes.filter(flake => !(flake.y > canvas.height))
+    }, [])
 
 const PlayerMovement$ = Observable.fromEvent(document, 'keyup')
     .merge(Observable.fromEvent(document, 'keydown'))
@@ -45,15 +61,16 @@ Observable.merge(
 
 // MAIN GAME OBSERVABLE
 const Game$ = Observable.combineLatest(
-    CurrentScore$, PlayerMovement$, CurrentOperationBehavior$,
-    (score, playerX, operation) => ({ score, playerX, operation })
-)
+    CurrentScore$, PlayerMovement$, CurrentOperationBehavior$, EvilBloodFlakes$,
+    (score, playerX, operation, flakes) => ({ score, playerX, operation, flakes })
+).sample(Observable.interval(50))
 
-function renderGameScene({ score, playerX, operation }) {
+function renderGameScene({ score, playerX, operation, flakes }) {
     clearCanvas()
     showScore(score)
     showPlayer({ x: playerX, y: PLAYER_Y_POSITION })
     showQuestion(operation.a, operation.b, operation.operator)
+    showFlakes(flakes)
 }
 
 Game$.subscribe(renderGameScene)
