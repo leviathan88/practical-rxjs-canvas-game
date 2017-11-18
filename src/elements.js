@@ -24,20 +24,6 @@ document.body.appendChild(canvas)
 document.body.appendChild(input)
 input.focus()
 
-
-// export functions
-module.exports = {
-    canvas,
-    ctx,
-    input,
-
-    showScore,
-    clearCanvas,
-    showPlayer,
-    showQuestion,
-    clearInput
-}
-
 // context functions
 function showScore(score) {
     ctx.fillStyle = TEXT_COLOR
@@ -82,4 +68,64 @@ function showPlayer({ x, y }) {
 
 function clearInput() {
     input.value = ''
+}
+
+const operationsMap = new Map([
+    [0, '+'],
+    [1, '-'],
+    [2, '*']
+])
+
+const operations = {
+    getRandomOperationNumber: () => getRandomNumber(3),
+    getRandomLargeNumber: () => getRandomNumber(100) + 1,
+    getRandomSmallNumber: () => getRandomNumber(20) + 1,
+    getOperator: i => operationsMap.get(i),
+    calculate: o => performOperations(o),
+    getOperationObject: () => {
+
+        const operator = operations.getOperator(operations.getRandomOperationNumber())
+        const a = operations.getRandomSmallNumber()
+        const b = operations.getRandomSmallNumber()
+        const result = operations.calculate(operator)(a, b)
+
+        return {
+            operator,
+            a,
+            b,
+            result,
+            timestamp: Date.now()
+        }
+    }
+}
+
+function performOperations(operator) {
+    return function(a, b) {
+        switch (operator) {
+            case '*':
+                return a * b
+            case '+':
+                return a + b
+            case '-':
+                return a - b
+        }
+    }
+}
+
+function getRandomNumber(range) {
+    return parseInt(Math.random() * range)
+}
+
+// export functions
+module.exports = {
+    canvas,
+    ctx,
+    input,
+
+    showScore,
+    clearCanvas,
+    showPlayer,
+    showQuestion,
+    clearInput,
+    operations
 }
