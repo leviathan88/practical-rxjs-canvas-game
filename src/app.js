@@ -34,14 +34,14 @@ const LatestOperation$ = Observable.merge(
         OperationsInterval$.map(() => ({ value: Date.now() }))
     )
     .filter(({ value }) => value === 'Enter' || (value - CurrentOperationBehavior$.getValue().timestamp >= OPERATION_LIFETIME))
-    .map(({ value }) => Number(input.value) === CurrentOperationBehavior$.getValue().result ? SCORE_CORRECT_POINTS : SCORE_PENALTY_POINTS)
+    .map(() => Number(input.value) === CurrentOperationBehavior$.getValue().result ? SCORE_CORRECT_POINTS : SCORE_PENALTY_POINTS)
     .do(clearInput)
     .do(() => CurrentOperationBehavior$.next(operations.getOperationObject()))
 
 Observable.merge(
     ScoreInterval$,
     LatestOperation$
-).subscribe(score => ScoreBehavior$.next(score))
+).subscribe(points => ScoreBehavior$.next(points))
 
 // MAIN GAME OBSERVABLE
 const Game$ = Observable.combineLatest(
