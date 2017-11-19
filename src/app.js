@@ -1,7 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations, showFlakes } from './elements'
+import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations, showFlakes, createFlake } from './elements'
 import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest } from './pure'
 
 // GAME RELATED CONSTANTS
@@ -13,6 +13,8 @@ const SCORE_INTERVAL_POINTS = 100
 const SCORE_CORRECT_POINTS = 50
 const SCORE_PENALTY_POINTS = -50
 const OPERATION_LIFETIME = 5000
+const FLAKE_FREQUENCY = 500
+const FLAKE_DROP_SPEED = 50
 
 // OBSERVABLE CONSTANTS
 const CurrentOperationBehavior$ = new BehaviorSubject(operations.getOperationObject())
@@ -21,22 +23,16 @@ const CurrentScore$ = ScoreBehavior$.scan(sumLatest)
 const ScoreInterval$ = Observable.interval(SCORE_INTERVAL_RAISE).map(() => SCORE_INTERVAL_POINTS)
 const PlayerEnterPress$ = Observable.fromEvent(input, 'keyup').pluck('key').filter(byEnterPress)
 const OperationsInterval$ = Observable.interval(500)
+const FlakeCreator$ = Observable.interval(FLAKE_FREQUENCY).map(_ => createFlake())
 
-const EvilBloodFlakes$ = Observable.interval(500)
-    .scan(flakes => {
-        const flake = {
-            x: parseInt(Math.random() * canvas.width),
-            y: 0,
-            radius: parseInt((Math.random() * 10) + 5)
-        }
-
+const EvilBloodFlakes$ = FlakeCreator$
+    .scan((flakes, flake) => [...flakes, flake].filter(flake => !(flake.y > canvas.height)), [])
+    .map(flakes => {
         flakes.forEach(flake => {
-            flake.y += 50
+            flake.y += FLAKE_DROP_SPEED
         })
-
-        flakes.push(flake)
-        return flakes.filter(flake => !(flake.y > canvas.height))
-    }, [])
+        return flakes
+    })
 
 const PlayerMovement$ = Observable.fromEvent(document, 'keyup')
     .merge(Observable.fromEvent(document, 'keydown'))
