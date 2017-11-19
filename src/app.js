@@ -1,7 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations, showFlakes, createFlake } from './elements'
+import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, getOperationObject, showFlakes, createFlake } from './elements'
 import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest } from './pure'
 
 // GAME RELATED CONSTANTS
@@ -17,7 +17,7 @@ const FLAKE_FREQUENCY = 500
 const FLAKE_DROP_SPEED = 50
 
 // OBSERVABLE CONSTANTS
-const CurrentOperationBehavior$ = new BehaviorSubject(operations.getOperationObject())
+const CurrentOperationBehavior$ = new BehaviorSubject(getOperationObject())
 const ScoreBehavior$ = new BehaviorSubject(0)
 const CurrentScore$ = ScoreBehavior$.scan(sumLatest)
 const ScoreInterval$ = Observable.interval(SCORE_INTERVAL_RAISE).map(() => SCORE_INTERVAL_POINTS)
@@ -48,7 +48,7 @@ const LatestOperation$ = Observable.merge(
     .filter(({ value }) => value === 'Enter' || (value - CurrentOperationBehavior$.getValue().timestamp >= OPERATION_LIFETIME))
     .map(() => Number(input.value) === CurrentOperationBehavior$.getValue().result ? SCORE_CORRECT_POINTS : SCORE_PENALTY_POINTS)
     .do(clearInput)
-    .do(() => CurrentOperationBehavior$.next(operations.getOperationObject()))
+    .do(() => CurrentOperationBehavior$.next(getOperationObject()))
 
 Observable.merge(
     ScoreInterval$,
