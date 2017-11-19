@@ -90,6 +90,11 @@ function createFlake() {
     }
 }
 
+function clearInput() {
+    input.value = ''
+}
+
+// Collision Logic
 const distance = 50
 
 function detectCollision(flakes, player) {
@@ -100,10 +105,7 @@ function isCollision(flake, player) {
     return (flake.x > player.x - distance && flake.x < player.x + distance) && (flake.y > player.y - distance && flake.y < player.y + distance)
 }
 
-function clearInput() {
-    input.value = ''
-}
-
+// Random Numbers logic
 const operationsMap = new Map([
     [0, '+'],
     [1, '-'],
