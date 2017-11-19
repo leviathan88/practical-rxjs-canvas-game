@@ -123,6 +123,10 @@ const operations = {
     }
 }
 
+function getOperationObject() {
+    return operations.getOperationObject()
+}
+
 function performOperations(operator) {
     return function(a, b) {
         switch (operator) {
@@ -153,5 +157,5 @@ module.exports = {
     clearInput,
     showFlakes,
     createFlake,
-    operations
+    getOperationObject
 }
