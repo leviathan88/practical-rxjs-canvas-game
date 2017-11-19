@@ -2,7 +2,7 @@ import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
 import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, getOperationObject, showFlakes, createFlake, detectCollision } from './elements'
-import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest, isDead } from './pure'
+import { byDirection, handlePlayerMovement, byEnterPress, sumLatest, isDead } from './pure'
 
 
 // GAME RELATED CONSTANTS
