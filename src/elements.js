@@ -66,7 +66,7 @@ function showPlayer({ x, y }) {
     ctx.fill()
 }
 
-function showFlakes(enemies) {
+function showFlakes(flakes) {
     const startAngle = 0 * (Math.PI / 180)
     const endAngle = 360 * (Math.PI / 180)
 
@@ -74,12 +74,20 @@ function showFlakes(enemies) {
     ctx.fillStyle = '#af111c'
     ctx.lineWidth = 1
 
-    enemies.forEach(({ x, y, radius }) => {
+    flakes.forEach(({ x, y, radius }) => {
         ctx.beginPath()
         ctx.arc(x, y, radius, startAngle, endAngle, false)
         ctx.fill()
         ctx.stroke()
     })
+}
+
+function createFlake() {
+    return {
+        x: parseInt(Math.random() * canvas.width),
+        y: 0,
+        radius: parseInt((Math.random() * 10) + 5)
+    }
 }
 
 function clearInput() {
@@ -144,5 +152,6 @@ module.exports = {
     showQuestion,
     clearInput,
     showFlakes,
+    createFlake,
     operations
 }
