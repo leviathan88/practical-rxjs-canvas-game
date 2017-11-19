@@ -1,7 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, getOperationObject, showFlakes, createFlake } from './elements'
+import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, getOperationObject, showFlakes, createFlake, detectCollision } from './elements'
 import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest } from './pure'
 
 // GAME RELATED CONSTANTS
@@ -32,7 +32,7 @@ const EvilBloodFlakes$ = FlakeCreator$
             flake.y += FLAKE_DROP_SPEED
         })
         return flakes
-    })
+    }).share()
 
 const PlayerMovement$ = Observable.fromEvent(document, 'keyup')
     .merge(Observable.fromEvent(document, 'keydown'))
@@ -40,6 +40,7 @@ const PlayerMovement$ = Observable.fromEvent(document, 'keyup')
     .filter(byDirection)
     .scan(handlePlayerMovement, PLAYER_STARTING_POSITION)
     .startWith(PLAYER_STARTING_POSITION)
+    .filter(x => !(x > canvas.width - 50 || x < 50))
 
 const LatestOperation$ = Observable.merge(
         PlayerEnterPress$.map(value => ({ value })),
@@ -54,6 +55,11 @@ Observable.merge(
     ScoreInterval$,
     LatestOperation$
 ).subscribe(points => ScoreBehavior$.next(points))
+
+Observable.combineLatest(
+    EvilBloodFlakes$,
+    PlayerMovement$
+).subscribe(([flakes, x]) => detectCollision(flakes, { x, y: PLAYER_Y_POSITION }))
 
 // MAIN GAME OBSERVABLE
 const Game$ = Observable.combineLatest(
