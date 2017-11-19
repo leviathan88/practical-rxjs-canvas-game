@@ -84,10 +84,20 @@ function showFlakes(flakes) {
 
 function createFlake() {
     return {
-        x: parseInt(Math.random() * canvas.width),
+        x: getRandomNumber(canvas.width),
         y: 0,
         radius: parseInt((Math.random() * 10) + 5)
     }
+}
+
+const distance = 50
+
+function detectCollision(flakes, player) {
+    return flakes.some(flake => isCollision(flake, player))
+}
+
+function isCollision(flake, player) {
+    return (flake.x > player.x - distance && flake.x < player.x + distance) && (flake.y > player.y - distance && flake.y < player.y + distance)
 }
 
 function clearInput() {
@@ -147,7 +157,6 @@ function getRandomNumber(range) {
 // export functions
 module.exports = {
     canvas,
-    ctx,
     input,
 
     showScore,
@@ -157,5 +166,6 @@ module.exports = {
     clearInput,
     showFlakes,
     createFlake,
-    getOperationObject
+    getOperationObject,
+    detectCollision
 }
