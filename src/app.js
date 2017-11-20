@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs/Rx'
 
 import { showScore, clearCanvas } from './elements'
-import { sumLatest } from './pure'
 
 // CONSTANTS
 const ScoreInterval$ = Observable.interval(1000)
