@@ -1,7 +1,19 @@
 import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
-import { canvas, input } from './elements'
-import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, getOperationObject, showFlakes, createFlake, detectCollision } from './elements'
+import { canvas, input, button } from './elements'
+import {
+    showScore,
+    clearCanvas,
+    showPlayer,
+    showQuestion,
+    clearInput,
+    getOperationObject,
+    showFlakes,
+    createFlake,
+    detectCollision,
+    showButton,
+    hideButton
+} from './elements'
 import { byDirection, handlePlayerMovement, byEnterPress, sumLatest, isDead } from './pure'
 
 
@@ -53,26 +65,29 @@ const LatestOperation$ = Observable.merge(
     .do(clearInput)
     .do(() => CurrentOperationBehavior$.next(getOperationObject()))
 
-Observable.merge(
+// Observables for subscription
+const Score$ = Observable.merge(
     ScoreInterval$,
     LatestOperation$
-).subscribe(points => ScoreBehavior$.next(points))
+).takeWhile(isAlive)
 
-// MAIN GAME OBSERVABLE
-const Game$ = Observable.combineLatest(
-    CurrentScore$, PlayerMovement$, CurrentOperationBehavior$, EvilBloodFlakes$,
-    (score, playerX, operation, flakes) => ({ score, playerX, operation, flakes })
-).sample(Observable.interval(50))
-
-Observable.combineLatest(
+const Life$ = Observable.combineLatest(
         EvilBloodFlakes$,
         PlayerMovement$
     ).map(([flakes, x]) => detectCollision(flakes, { x, y: PLAYER_Y_POSITION }))
     .filter(isDead)
-    .subscribe(_ => IsAlive$.next(false))
+    .takeWhile(isAlive)
+
+const Game$ = Observable.combineLatest(
+    CurrentScore$, PlayerMovement$, CurrentOperationBehavior$, EvilBloodFlakes$,
+    (score, playerX, operation, flakes) => ({ score, playerX, operation, flakes })
+).sample(Observable.interval(50)).takeWhile(isAlive)
+
+// observable always subscribed to
+Observable.fromEvent(button, 'click').subscribe(playAgain)
 
 // START THE GAME
-Game$.takeWhile(() => IsAlive$.getValue()).subscribe(renderGameScene)
+startGame()
 
 function renderGameScene({ score, playerX, operation, flakes }) {
     clearCanvas()
@@ -80,4 +95,26 @@ function renderGameScene({ score, playerX, operation, flakes }) {
     showPlayer({ x: playerX, y: PLAYER_Y_POSITION })
     showQuestion(operation.a, operation.b, operation.operator)
     showFlakes(flakes)
+}
+
+function isAlive() {
+    return IsAlive$.getValue()
+}
+
+function startGame() {
+    Game$.subscribe(renderGameScene)
+    Score$.subscribe(points => ScoreBehavior$.next(points))
+    Life$.subscribe(_ => {
+        IsAlive$.next(false)
+        showButton()
+    })
+}
+
+function playAgain() {
+    IsAlive$.next(true)
+    hideButton()
+    startGame()
+    CurrentScore$.take(1).subscribe(lastValue => {
+        ScoreBehavior$.next(lastValue * -1)
+    })
 }
