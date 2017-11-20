@@ -13,7 +13,3 @@ canvas {
     display: block;
     background: #D1C4E9;
 }
-
-#gameContainer {
-    display: flex;
-}
