@@ -19,9 +19,15 @@ input.setAttribute('class', 'user-input')
 input.setAttribute('placeholder', 'RESULT')
 input.setAttribute('type', 'number')
 
+// create play again button
+const button = document.createElement('button')
+button.setAttribute('class', 'hidden')
+button.innerHTML = 'Play Again'
+
 // append elements to the document
 document.body.appendChild(canvas)
 document.body.appendChild(input)
+document.body.appendChild(button)
 input.focus()
 
 // context functions
@@ -94,6 +100,14 @@ function clearInput() {
     input.value = ''
 }
 
+function hideButton() {
+    button.setAttribute('class', 'hidden')
+}
+
+function showButton() {
+    button.setAttribute('class', 'button')
+}
+
 // Collision Logic
 const distance = 50
 
@@ -160,6 +174,7 @@ function getRandomNumber(range) {
 module.exports = {
     canvas,
     input,
+    button,
 
     showScore,
     clearCanvas,
@@ -169,5 +184,7 @@ module.exports = {
     showFlakes,
     createFlake,
     getOperationObject,
-    detectCollision
+    detectCollision,
+    showButton,
+    hideButton
 }
