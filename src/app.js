@@ -2,7 +2,7 @@ import { Observable, BehaviorSubject } from 'rxjs/Rx'
 
 import { canvas, input } from './elements'
 import { showScore, clearCanvas, showPlayer, showQuestion, clearInput, operations } from './elements'
-import { byDirection, handlePlayerMovement, byEnterPress, byNotEmpty, multiplyNumbers, sumLatest } from './pure'
+import { byDirection, handlePlayerMovement, byEnterPress, sumLatest } from './pure'
 
 // GAME RELATED CONSTANTS
 const PLAYER_Y_POSITION = canvas.height - 70
