@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs/Rx'
 
-import { canvas, showScore, clearCanvas, showPlayer } from './elements'
+import { canvas } from './elements'
+import { showScore, clearCanvas, showPlayer } from './elements'
 import { byDirection, handlePlayerMovement } from './pure'
 
 // GAME RELATED CONSTANTS
